@@ -1,0 +1,2 @@
+> When fetching a route and sleeping the function's code for 10sec, multiple pages could still be fetched 
+proving the fact that Flask threads functions -> https://flask.palletsprojects.com/en/2.0.x/design/

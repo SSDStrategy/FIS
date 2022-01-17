@@ -1,22 +1,16 @@
 """ This is the main module for the Flask webserver """
 
 from flask import Flask, render_template, request, redirect
+from flask_session import Session 
+from flask_talisman import Talisman
 import json
-from threading import Thread
+from time import sleep # For testing purposes 
 
 # need to ensure correct configurations are set like for cookies
 # and HTTPS 
 app = Flask(__name__)
+#Talisman(app)
 
-def json_io(login_dict):
-    """
-        Accepts an entered username and password related dictionary,
-        converts it to a JSON object then sends it to the Auth module
-        to confirm user exists.
-    """
-
-    print(login_dict)
-    json.dumps(login_dict)
 
 # Homepage logic 
 @app.route("/", methods = ["GET", "POST"])
@@ -35,21 +29,18 @@ def homepage():
         name = request.form.get("name")
         password = request.form.get("password")
         login = {name : password}
-        # Might need to make json_io a class and run the rest of
-        # this routes code in the thread so that the main thread
-        # can revert back to the normal webserver listening 
+        login_json = json.dumps(login)
         
-        auth_thread = Thread(target= json_io, args= (login,) )
-        auth_thread.start()
         # Send JSON object to Authentication module
-        return render_template("/options.html")
-        
-        
         # Process returned information
         # if(returned value)== True:
-        # redirect to options page
+        #   set session value 
+        #   redirect to options page
         # else:
         # inform user
+
+        return render_template("options.html")
+
 
 # Options page logic
 @app.route("/options", methods = ["GET", "POST"])
@@ -65,7 +56,17 @@ def options():
     if msg == "GET":
         return render.template("options.html")
 
-    elif (msg == "POST") and # logout selected 
+    #elif (msg == "POST") and # logout selected 
+
+
+# Create page logic 
+@app.route("/create", methods = ["GET", "POST"])
+def create():
+    """
+        The create page allows a user to create a case
+        by first entering its related metadata, after
+        which the page is redirected to the edit page.
+    """
 
 
 # Search page logic
@@ -86,33 +87,14 @@ def edit():
         specific case.
     """
 
-# Create page logic 
-@app.route("/create", methods = ["GET", "POST"])
-def create():
-    """
-        The create page allows a user to create a case
-        by first entering its related metadata, after
-        which the page is redirected to the edit page.
-    """
-
 
 # Delete page logic 
 @app.route("/delete", methods = ["GET", "POST"])
-def create():
+def delete():
     """
         The delete page allows a user to select and
         delete a case.
     """
-
-
-
-
-
-
-
-
-
-
 
 
         
