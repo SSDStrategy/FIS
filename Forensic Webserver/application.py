@@ -2,7 +2,7 @@
 
 from flask import Flask, render_template, request, redirect
 from flask_session import Session 
-#from flask_talisman import Talisman -> required if using HTTPs
+#from flask_talisman import Talisman -> required if using HTTPs to set flask config
 import json
 from time import sleep # For testing purposes
 import requests
