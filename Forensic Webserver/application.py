@@ -2,9 +2,10 @@
 
 from flask import Flask, render_template, request, redirect
 from flask_session import Session 
-from flask_talisman import Talisman
+#from flask_talisman import Talisman -> required if using HTTPs
 import json
-from time import sleep # For testing purposes 
+from time import sleep # For testing purposes
+import requests
 
 # need to ensure correct configurations are set like for cookies
 # and HTTPS 
@@ -26,12 +27,17 @@ def homepage():
         return render_template("index.html")
     elif msg == "POST":
         # Log login attempt
-        name = request.form.get("name")
-        password = request.form.get("password")
-        login = {name : password}
-        login_json = json.dumps(login)
-        
-        # Send JSON object to Authentication module
+        if (request.headers.get('Content-Type') != 'application/json'):
+            name = request.form.get("name")
+            password = request.form.get("password")
+            login = {name : password}
+            login_json = json.dumps(login)
+            h_content = {'Content-Type': 'application/json'}
+            repy = requests.post('http://localhost:5005/', headers=h_content, data= login_json)
+        else:
+            login_result = request.json
+            print(login_result)
+
         # Process returned information
         # if(returned value)== True:
         #   set session value 
