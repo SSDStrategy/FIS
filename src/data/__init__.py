@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, MetaData
+from sqlalchemy import create_engine
 from sqlalchemy.orm import create_session
 
 engine = create_engine("sqlite+pysqlite:///db.sqlite", echo=True)

@@ -1,3 +1,5 @@
+# Test connectivity
+
 def test_database_creation():
     import data
     result = data.session.query(data.User).all()

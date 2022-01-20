@@ -38,9 +38,21 @@ class Case(Base):
     createdOn = Column(DateTime)
     evidences = relationship("Evidence", back_populates="case")
 
-    def __repr__(self) -> str:
-        return f"Case(id={self.case_id!r}"
+    def __init__(self, user_id, name="", description=""):
+        self.user_id = user_id
+        self.name = name
+        self.description = description
+        self.deleted = False
+        self.createdOn = datetime.now()
 
+    def __repr__(self) -> str:
+        return f"Case(id={self.case_id!r}, " \
+               f"name={self.name!r}, " \
+               f"desc={self.description!r}, " \
+               f"createdBy={self.user_id!r}, " \
+               f"createdOn={self.createdOn}, " \
+               f"updatedOn={self.updatedOn!r}, " \
+               f"isDeleted={self.deleted})"
 
 class Evidence(Base):
     __tablename__ = "evidence"
