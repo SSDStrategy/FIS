@@ -18,12 +18,12 @@ def login():
     print(type(login))
     # check database for username and password 
     #result = [validity, authorisation_level]
-    result = [True]
+    result = [login[0], True]
     result_json = json.dumps(result)
-    h_content = {'Content-Type': 'application/json'}
-    repy = requests.post('http://localhost:5000/', headers=h_content, data= result_json)
+    http_header = {'Content-Type': 'application/json'}
+    repy = requests.post('http://localhost:5000/update_users', headers=http_header, data= result_json)
 
-    return login
+    return 'Succeeded'
 
 #x = threading.Thread(target = x)
 #x.start()

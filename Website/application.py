@@ -6,47 +6,58 @@ from flask_session import Session
 import json
 from time import sleep # For testing purposes
 import requests
+import time
 
 # need to ensure correct configurations are set like for cookies
 # and HTTPS 
 app = Flask(__name__)
 #Talisman(app)
 
+logged_in_users = {}
 
-# Homepage logic 
+# Login page logic 
 @app.route("/", methods = ["GET", "POST"])
-@app.route("/home", methods = ["GET", "POST"])
-def homepage():
+def login():
     """
         The home page route function displays the login page, requests log in,
         and processes the login details provided
     """
-    
+    global logged_in_users
     msg = request.method
     if msg == "GET":
-        return render_template("index.html")
+        return render_template("login.html")
     elif msg == "POST":
         # Log login attempt
-        if (request.headers.get('Content-Type') != 'application/json'):
-            name = request.form.get("name")
-            password = request.form.get("password")
-            login = {name : password}
-            login_json = json.dumps(login)
-            h_content = {'Content-Type': 'application/json'}
-            repy = requests.post('http://localhost:5005/', headers=h_content, data= login_json)
-        else:
-            login_result = request.json
-            print(login_result)
-
-        # Process returned information
-        # if(returned value)== True:
+        name = request.form.get("name")
+        password = request.form.get("password")
+        login = [name, password]
+        login_json = json.dumps(login)
+        http_header = {'Content-Type': 'application/json'}
+        repy = requests.post('http://localhost:5005/', headers=http_header, data= login_json)
+        time.sleep(2)
+        if logged_in_users[name] == True:
+            return redirect("/options")
+            
+        #print(login_result)
+            
+        #if login_result == True:
+        #return render_template("options.html")
+        #else:
+        #return "Login Failed"
+        #time.sleep(3)
         #   set session value 
-        #   redirect to options page
-        # else:
         # inform user
-
-        return render_template("options.html")
-
+        #if (request.headers.get('Content-Type') == 'application/json'):
+            
+@app.route("/update_users", methods = ["POST"])
+def log_users():
+    global logged_in_users
+    
+    new_user = request.json
+    logged_in_users[new_user[0]] = new_user[1]
+    print(logged_in_users)
+    return "successful"
+              
 
 # Options page logic
 @app.route("/options", methods = ["GET", "POST"])
@@ -58,9 +69,9 @@ def options():
     
     # check authentication possibly by a session cookie
     # if authenticated then proceed
-    msg = request.method
-    if msg == "GET":
-        return render.template("options.html")
+    #msg = request.method
+    #if msg == "GET":
+    return render_template("options.html")
 
     #elif (msg == "POST") and # logout selected 
 
