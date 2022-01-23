@@ -1,21 +1,20 @@
 
 """ This is the main module for the Flask webserver """
 
-from flask import Flask, render_template, request, redirect
-from flask_session import Session 
+from flask import Flask, render_template, request, redirect, session
 #from flask_talisman import Talisman -> required if using HTTPs to set flask config
 import json
-from time import sleep # For testing purposes
 import requests
 import time
-import hashlib
 import pyDes
 
 # need to ensure correct configurations are set like for cookies
 # and HTTPS 
 app = Flask(__name__)
+app.secret_key = b'1@#rTb47BK"_9'
 encryptor = pyDes.triple_des("VeRy$ecret#1#3#5", pad= ".")
-logged_in_users = {}
+
+logged_in_users_flag = {}
 
 # Login page logic 
 @app.route("/", methods = ["GET", "POST"])
@@ -24,7 +23,7 @@ def login():
         The home page route function displays the login page, requests log in,
         and processes the login details provided
     """
-    global logged_in_users
+    global logged_in_users_flag
     msg = request.method
     if msg == "GET":
         return render_template("login.html")
@@ -37,28 +36,22 @@ def login():
         login_json = json.dumps(login)
         http_header = {'Content-Type': 'application/json'}
         repy = requests.post('http://localhost:5005/', headers=http_header, data= login_json)
-        time.sleep(2)
-        if logged_in_users[name] == True:
+        time.sleep(4)
+        if logged_in_users_flag[name] > 0:
+            session['user_auth'] = logged_in_users_flag[name]
+            del logged_in_users_flag[name]
             return redirect("/options")
-            
-        #print(login_result)
-            
-        #if login_result == True:
-        #return render_template("options.html")
-        #else:
-        #return "Login Failed"
-        #time.sleep(3)
-        #   set session value 
-        # inform user
-        #if (request.headers.get('Content-Type') == 'application/json'):
+
             
 @app.route("/update_users", methods = ["POST"])
 def log_users():
-    global logged_in_users
+    ''' Creates an entry to be stored temporarily in a global dictionary '''
+
+    global logged_in_users_flag
     
     new_user = request.json
-    logged_in_users[new_user[0]] = new_user[1]
-    print(logged_in_users)
+    logged_in_users_flag[new_user[0]] = new_user[1]
+    print(logged_in_users_flag)
     return "successful"
               
 
@@ -70,13 +63,21 @@ def options():
         to navigate to the required service.
     """
     
+    msg = request.method
+    if msg == "GET":
+        try:
+            if session['user_auth'] > 0:
+                print(session["user_auth"])
+                return render_template("options.html")
+        except:
+                return 'you are not logged in'
     # check authentication possibly by a session cookie
     # if authenticated then proceed
     #msg = request.method
     #if msg == "GET":
-    return render_template("options.html")
+        
 
-    #elif (msg == "POST") and # logout selected 
+        
 
 
 # Create page logic 

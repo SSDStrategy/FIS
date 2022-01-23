@@ -22,8 +22,12 @@ def login():
     password = password.decode()
     print(password)
     # check database for username and password 
-    #result = [validity, authorisation_level]
-    result = [login[0], True]
+    #result = [name, authorisation_level]
+    result = []
+    if name == 'Michael' and password == "1234":
+        result = [login[0], 1]
+    elif name == 'Amy' and password == "5678":
+        result = [login[0], 2]
     result_json = json.dumps(result)
     http_header = {'Content-Type': 'application/json'}
     repy = requests.post('http://localhost:5000/update_users', headers=http_header, data= result_json)
