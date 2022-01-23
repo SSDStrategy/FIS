@@ -1,3 +1,4 @@
+
 """ This is the main module for the Flask webserver """
 
 from flask import Flask, render_template, request, redirect
@@ -7,12 +8,13 @@ import json
 from time import sleep # For testing purposes
 import requests
 import time
+import hashlib
+import pyDes
 
 # need to ensure correct configurations are set like for cookies
 # and HTTPS 
 app = Flask(__name__)
-#Talisman(app)
-
+encryptor = pyDes.triple_des("VeRy$ecret#1#3#5", pad= ".")
 logged_in_users = {}
 
 # Login page logic 
@@ -30,7 +32,8 @@ def login():
         # Log login attempt
         name = request.form.get("name")
         password = request.form.get("password")
-        login = [name, password]
+        encrypted_password = (encryptor.encrypt(password))
+        login = [name, list(encrypted_password)]
         login_json = json.dumps(login)
         http_header = {'Content-Type': 'application/json'}
         repy = requests.post('http://localhost:5005/', headers=http_header, data= login_json)
