@@ -1,6 +1,7 @@
 from sqlalchemy import Integer, Column, String, Boolean, Date, DateTime, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship
 from datetime import datetime
+import enum
 
 Base = declarative_base()
 
@@ -9,8 +10,8 @@ class User(Base):
     __tablename__ = "user"
     user_id = Column(Integer, primary_key=True)
     createdOn = Column(DateTime)
-    username = Column(String(50))
-    email = Column(String(256))
+    username = Column(String(50), unique=True)
+    email = Column(String(256), unique=True)
     password = Column(String)
     cases = relationship("Case", back_populates="createdBy")
     evidences = relationship("Evidence", back_populates="createdBy")
@@ -54,6 +55,7 @@ class Case(Base):
                f"updatedOn={self.updatedOn!r}, " \
                f"isDeleted={self.deleted})"
 
+
 class Evidence(Base):
     __tablename__ = "evidence"
     evidence_id = Column(Integer, primary_key=True)
@@ -66,3 +68,19 @@ class Evidence(Base):
 
     def __repr__(self) -> str:
         return f"Evidence(id={self.evidence_id!r}) belongs to {self.case!r})"
+
+
+class Permission(Base):
+    __tablename__ = 'permission'
+    permission_id = Column(Integer, primary_key=True)
+    entity = Column(Integer)
+    operation = Column(Integer)
+    user = Column(Integer)
+
+
+class OpCode(enum.Enum):
+    CREATE = 1
+    UPDATE = 2
+    DELETE = 3
+    READ = 4
+    SEARCH = 5

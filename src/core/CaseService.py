@@ -1,35 +1,7 @@
 import datetime
 
-from data import CaseRepository, Case
-
-import enum
-
-
-class OpCode(enum.Enum):
-    CREATE = 1
-    UPDATE = 2
-    DELETE = 3
-    READ = 4
-    SEARCH = 5
-
-
-class Authorizer:
-    def authorize(self, op_code: OpCode):
-        return True
-
-
-class DefaultAuthorizer(Authorizer):
-
-    def __init__(self, jwt):
-        self.loginContext = jwt
-
-    def authorize(self, op_code: OpCode):
-        return super().authorize(op_code)
-
-
-class AuthError(Exception):
-    def __str__(self) -> str:
-        return "Authorization exception"
+from core.Authorization import Authorizer, AuthError
+from data import CaseRepository, Case, OpCode
 
 
 class CaseService:

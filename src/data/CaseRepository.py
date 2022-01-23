@@ -18,8 +18,10 @@ class CaseRepository:
         pass
 
     def delete_by_id(self, case_id: int) -> None:
+        session.begin()
         case_to_delete = self.find_by_id(case_id)
         session.delete(case_to_delete)
+        session.commit()
 
     def save(self, case: Case) -> int:
         inserted_id = case.case_id
