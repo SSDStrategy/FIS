@@ -6,7 +6,7 @@
     username and appropriate authorisation level, or a failed login flag.
 """
 
-from flask import Flask, request
+from flask import Flask, request, make_response
 import requests
 import json
 import hashlib
@@ -39,7 +39,7 @@ def login():
     password = password.decode()
     
     # **Try fetch username and password from database**
-    #result = [name, authorisation_level]
+    # **result = [name, authorisation_level]**
     result = []
     if username == 'Michael' and password == "1234":
         result = [username, 1]
@@ -58,12 +58,7 @@ def login():
 
     return 'Succeeded'
 
-@app.route('/logout', methods = ['POST'])
-def logout():
 
-    name = request.json
-    print(name)
-    return 'succeeded'
 
 # Run the instantiated Flask webserver
 app.run(port = 5005)

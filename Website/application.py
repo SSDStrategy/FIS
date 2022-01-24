@@ -41,7 +41,7 @@ def login():
             encrypted_password = (encryptor.encrypt(password))
             # The encytped password is converted to a list of integers to make it
             # JSON serialisable as it is returned as a bytestring.
-            # The list is put into another list containing the username entered.
+            # The list is put into another list also containing the username entered.
             login = [name, list(encrypted_password)]
             login_json = json.dumps(login)
 
@@ -56,10 +56,13 @@ def login():
         
         # Check the values returned from the Authentication microservice
         try:
+            # Check the flag received from the microservice and temporarily
+            # stored in the logged_in_users_flag dictionary 
             if ((logged_in_users_flag[name] == 1) or 
                (logged_in_users_flag[name] == 2) or 
                (logged_in_users_flag[name] == 3)):
-                
+
+                # Create a session and assign the user's name and auth level to it 
                 session['user_auth'] = [name, logged_in_users_flag[name]]
                 del logged_in_users_flag[name]
                 #**Log login outcome**
@@ -109,9 +112,7 @@ def options():
                 
                 return render_template("options.html", message = "Please select below what you would like to do:")
         except KeyError:
-                return render_template("login.html", message = "You are not logged in. Please login below")
-        
-        
+                return redirect("/")        
 
 
 # Create URL logic 
@@ -162,30 +163,25 @@ def delete():
 @app.route("/logout", methods = ["GET", "POST"])
 def logout():
     """
-        The delete page allows a user to select and
-        delete a case.
+        To log out.
     """
     #**Log logout**
 
-    try:
-        name = session["user_auth"][0]
-        name_json = json.dumps(name)
+    
+    name = session["user_auth"][0]
+    name_json = json.dumps(name)
 
+    try:
         # Send to the Authentication microservice.
         http_header = {'Content-Type': 'application/json'}
         reply = requests.post('http://localhost:5005/logout', headers=http_header, data= name_json)
-        # Sleep the code so that any communication delay won't create
-        # a fault as the microservice responds to the "log_users" URL below.
-        time.sleep(4)
-        if Response.session_code == 200:
-            session.pop('user_auth', None)
-            >return render_template("login.html", message = "You have been logged out")
-        else:
-            >return render_template("login.html", message = "Login failed. Please try again")
-        
-            
+        session.pop('user_auth', None)
+        return "logout successful"
     except:
-            >return render_template("options.html", message = "Logout failed. Please try again")
+        return "logout unsuccessful"
+                   
+    
+            
 
     
         
