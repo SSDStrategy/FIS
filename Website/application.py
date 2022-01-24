@@ -2,21 +2,24 @@
 """ This is the main module for the Flask webserver """
 
 from flask import Flask, render_template, request, redirect, session
-#from flask_talisman import Talisman -> required if using HTTPs to set flask config
 import json
 import requests
 import time
 import pyDes
 
-# need to ensure correct configurations are set like for cookies
-# and HTTPS 
+# Create Flask instance and set configurations
 app = Flask(__name__)
-app.secret_key = b'1@#rTb47BK"_9'
+app.secret_key = '1@#rTb47BK"_9'
+app.config['PERMANENT_SESSION_LIFETIME'] = 7200
+
+# Instantiate encryption object
 encryptor = pyDes.triple_des("VeRy$ecret#1#3#5", pad= ".")
 
+# Initiate global dictionary to temporarily store authentication
+# details until a user session is created
 logged_in_users_flag = {}
 
-# Login page logic 
+
 @app.route("/", methods = ["GET", "POST"])
 def login():
     """
