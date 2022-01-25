@@ -1,7 +1,7 @@
 
 """ This is the main module for the Flask webserver """
 
-from flask import Flask, render_template, request, redirect, session, Response
+from flask import Flask, render_template, request, redirect, session, Response, url_for
 import json
 import requests
 import time
@@ -19,6 +19,17 @@ encryptor = pyDes.triple_des("VeRy$ecret#1#3#5", pad= ".")
 # details until a user session is created.
 logged_in_users_flag = {}
 
+def check_logged_in(html_file, msg):
+    """ Checks authorisation """
+    try:
+        if (session['user_auth'][1] == 1 or
+            session['user_auth'][1] == 2 or
+            session['user_auth'][1] == 3):
+                
+            return render_template(html_file, message = msg)
+    except KeyError:
+            return redirect(url_for('login', message = "You are not logged in"))  
+
 # Initial login URL logic follows
 @app.route("/", methods = ["GET", "POST"])
 def login():
@@ -33,7 +44,11 @@ def login():
     msg = request.method
 
     if msg == "GET":
-        return render_template("login.html", message = "")
+        if request.args.get('message'):
+            return render_template("login.html", message = request.args.get('message'))
+        else:
+            return render_template("login.html")
+            
     elif msg == "POST":
         try:
             name = request.form.get("name")
@@ -102,17 +117,11 @@ def options():
         The options page provides an initial means to the user
         to navigate to the required service.
     """
-    
+
     msg = request.method
     if msg == "GET":
-        try:
-            if (session['user_auth'][1] == 1 or
-                session['user_auth'][1] == 2 or
-                session['user_auth'][1] == 3):
-                
-                return render_template("options.html", message = "Please select below what you would like to do:")
-        except KeyError:
-                return redirect("/")        
+        result = check_logged_in("options.html", "Please select below what you would like to do:")
+        return result      
 
 
 # Create URL logic 
@@ -124,7 +133,11 @@ def create():
         which the page is redirected to the edit page.
     """
 
-    return render_template("create.html")
+    msg = request.method
+    if msg == "GET":
+        result = check_logged_in("create.html", "please..")
+        return result    
+    
 
 
 # Search URL logic
@@ -136,7 +149,11 @@ def search():
         whose values contain the entered ones.       
     """
 
-    return render_template("search.html")
+    msg = request.method
+    if msg == "GET":
+        result = check_logged_in("search.html", "please...")
+        return result    
+    
 
 # Edit URL logic
 @app.route("/edit", methods = ["GET", "POST"])
@@ -146,8 +163,11 @@ def edit():
         number for a case to edit then redirects to the
         specific case.
     """
-
-    return render_template("edit.html")
+    msg = request.method
+    if msg == "GET":
+        result = check_logged_in("edit.html", "PLEASE...")
+        return result    
+    
 
 # Delete URL logic 
 @app.route("/delete", methods = ["GET", "POST"])
@@ -156,8 +176,13 @@ def delete():
         The delete page allows a user to select and
         delete a case.
     """
-
-    return render_template("delete.html")
+    
+    msg = request.method
+    if msg == "GET":
+        result = check_logged_in("delete.html", "PLEASE...")
+        return result    
+    
+    
 
 # Logout URL logic 
 @app.route("/logout", methods = ["GET", "POST"])
@@ -165,14 +190,12 @@ def logout():
     """
         To log out.
     """
-    #**Log logout**
-
-    
-    name = session["user_auth"][0]
-    name_json = json.dumps(name)
+    #**Log logout** 
 
     try:
-        # Send to the Authentication microservice.
+        name = session["user_auth"][0]
+        name_json = json.dumps(name)
+        # Send to the Authentication microservice to process and update database.
         http_header = {'Content-Type': 'application/json'}
         reply = requests.post('http://localhost:5005/logout', headers=http_header, data= name_json)
         session.pop('user_auth', None)
