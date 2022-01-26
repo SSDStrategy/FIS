@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-3 mx-auto">
+            <h1> Create case </h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mx-auto">
+            <form method="post" action="create">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name">
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <input type="text" class="form-control" id="description">
+                </div>
+
+                <div class="mb-3">
+                   <button type="submit" class="btn btn-primary form-control">Create</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock  %}

@@ -16,7 +16,7 @@ class User(Base):
     cases = relationship("Case", back_populates="createdBy")
     evidences = relationship("Evidence", back_populates="createdBy")
 
-    def __init__(self, username, email, password):
+    def __init__(self, username, email="", password=""):
         self.username = username
         self.email = email
         self.password = password

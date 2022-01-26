@@ -6,6 +6,14 @@ from data.UserRepository import UserRepository
 
 
 class UserService:
+    _instance = None
+
+    def __new__(cls, user_repository: UserRepository):
+        if cls._instance is None:
+            cls._instance = object.__new__(cls)
+            cls.__init__(cls._instance, user_repository)
+        return cls._instance
+
     def __init__(self, user_repository: UserRepository):
         self.user_repo = user_repository
 

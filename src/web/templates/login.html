@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-3 mx-auto">
+            <h1> G & M Forensics </h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4 mx-auto">
+            <form method="post" action="create">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username">
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password">
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-success form-control">Login</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <div class="row col-lg-4 mx-auto">
+        <a class="btn btn-link" href="#" >Contact admin</a>
+    </div>
+</div>
+{% endblock %}

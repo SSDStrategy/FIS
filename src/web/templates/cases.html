@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-3 mx-auto">
+            <h1>Cases</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            {% if cases %}
+            <table>
+                <thead>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Date creation</th>
+                <th>Owner</th>
+                <th>Edit</th>
+                <th>Delete</th>
+                </thead>
+                {% for case in cases %}
+                <tr>
+                    <td>{{case.name}}</td>
+                    <td>{{case.description}}</td>
+                    <td>{{case.createdOn}}</td>
+                    <td>{{case.createdBy}}</td>
+                    <td>Edit - {{case.case_id}}</td>
+                    <td>Delete - {{case.case_id}}</td>
+                </tr>
+                {% endfor %}
+
+            </table>
+            {% else %}
+            <div class="alert alert-warning" role="alert">
+                No case found!
+            </div>
+            {% endif%}
+
+        </div>
+    </div>
+</div>
+
+{% endblock  %}
