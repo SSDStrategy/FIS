@@ -11,14 +11,20 @@ University of Essex.
 
 * Run as a process:
 
-  ``flask run -h localhost -p 5005 src/auth/Authenticate``
+  ```
+  set FLASK_APP=src/auth/Authenticate
+  flask run -h localhost -p 5005
+  ```
 
-  this is going to start the authentication service
+this is going to start the authentication service
 
 
 * Run as a separate process:
 
-  ``flask run src/web/application``
+  ```
+  set FLASK_APP=src/web/application
+  flask run src/web/application
+  ```
 
 # Differences between implementation and proposal
 
